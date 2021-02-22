@@ -2,7 +2,7 @@
 
 #### School of Computer Science, Kookmin Univ.
 
---
+---
 
 ## Lecture Notes
 
@@ -10,7 +10,7 @@
 	- Part I ([pdf](https://drive.google.com/file/d/1LWNzd9J2800xwJPIeGwqRS-GHijVQpJ-/view?usp=sharing))
 	- Part II
 
---
+---
 
 * Week 2 - Markov Localization & Bayes Filters
 * Week 3 - Kalman Filters, EKF & Sensor Fusion
@@ -19,7 +19,7 @@
 * Week 6 - Motion Planning & the Hybrid A* Algorithm
 * Week 7 - Trajectory Generation
 
---
+---
 
 * Week 9
 * Week 10
