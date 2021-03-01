@@ -8,7 +8,7 @@
 
 * Week 1 - Introduction
 	- Part I ([pdf](https://drive.google.com/file/d/1LWNzd9J2800xwJPIeGwqRS-GHijVQpJ-/view?usp=sharing))
-	- Part II
+	- Part II ([pdf](https://drive.google.com/file/d/12sgyXqF2zwq5x7YpO_6_WXRFCKJr5p2M/view?usp=sharing))
 
 ---
 
