@@ -8,11 +8,10 @@
 
 * Week 1 - Introduction
 	- Part I ([pdf](https://drive.google.com/file/d/1LWNzd9J2800xwJPIeGwqRS-GHijVQpJ-/view?usp=sharing))
-	- Part II ([pdf](https://drive.google.com/file/d/12sgyXqF2zwq5x7YpO_6_WXRFCKJr5p2M/view?usp=sharing))
 
 ---
 
-* Week 2 - Markov Localization & Bayes Filters
+* Week 2 - Markov Localization & Bayes Filters ([pdf](https://drive.google.com/file/d/12sgyXqF2zwq5x7YpO_6_WXRFCKJr5p2M/view?usp=sharing))
 * Week 3 - Kalman Filters, EKF & Sensor Fusion
 * Week 4 - Motion Model & Particle Filters
 * Week 5 - Path Planning & the A* Algorithm
