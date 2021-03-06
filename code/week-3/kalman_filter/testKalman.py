@@ -4,7 +4,6 @@ from data import true_velocity
 from kalman import KalmanFilter
 from plot import plot_graphs
 
-meanV = 80
 dt = 0.1
 
 A = np.array([
