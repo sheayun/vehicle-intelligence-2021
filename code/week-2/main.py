@@ -81,6 +81,8 @@ if __name__ == '__main__':
             )
             # Measurement update:
             # Calculate observation probability
+            
+#             print(landmark_positions, observations[t], pseudo_ranges)
             observation_prob = observation_model(
                 landmark_positions, observations[t],
                 pseudo_ranges, observation_stdev
@@ -103,7 +105,8 @@ if __name__ == '__main__':
 
         # Collect data to plot according to timestep.
         graph.append(posteriors)
-
+    
+#     print(graph)
     # Now we generate an animated plot with the saved data.
     fig, ax = plt.subplots(figsize=(10, 10), num='Markov Localization')
     bgraph = plt.bar(range(map_size), [0] * map_size)
@@ -113,4 +116,6 @@ if __name__ == '__main__':
         fig, graph_animator.animate, blit=True, interval=1000, repeat=False,
         frames=len(graph)
     )
+    ani.save('markov.gif', writer='imagemagick', fps=0.5, dpi=100)
     plt.show()
+    

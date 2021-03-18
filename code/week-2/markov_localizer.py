@@ -41,29 +41,60 @@ def estimate_pseudo_range(landmarks, p):
 def motion_model(position, mov, priors, map_size, stdev):
     # Initialize the position's probability to zero.
     position_prob = 0.0
-
-    # TODO: Loop over state space for all possible prior positions,
-    # calculate the probability (using norm_pdf) of the vehicle
-    # moving to the current position from that prior.
-    # Multiply this probability to the prior probability of
-    # the vehicle "was" at that prior position.
+    
+    ###################################################################
+    # TODO: Loop over state space for all possible prior positions,   #
+    # calculate the probability (using norm_pdf) of the vehicle       #
+    # moving to the current position from that prior.                 #
+    # Multiply this probability to the prior probability of           #
+    # the vehicle "was" at that prior position.                       #
+    ###################################################################
+    
+    # Loop over state space for all possible position
+    for i in range(map_size):
+        # Calculate distance to the pseudo position from current position(i)
+        dist = position - i
+        # Calculate transition probability 
+        transition_prob = norm_pdf(dist, mov, stdev)
+        # Multiply transition probability to the prior probability of the vehicle "was" at that prior position.
+        position_prob += transition_prob * priors[i]
+    
     return position_prob
 
 # Observation model (assuming independent Gaussian)
 def observation_model(landmarks, observations, pseudo_ranges, stdev):
     # Initialize the measurement's probability to one.
     distance_prob = 1.0
-
-    # TODO: Calculate the observation model probability as follows:
-    # (1) If we have no observations, we do not have any probability.
-    # (2) Having more observations than the pseudo range indicates that
-    #     this observation is not possible at all.
-    # (3) Otherwise, the probability of this "observation" is the product of
-    #     probability of observing each landmark at that distance, where
-    #     that probability follows N(d, mu, sig) with
-    #     d: observation distance
-    #     mu: expected mean distance, given by pseudo_ranges
-    #     sig: squared standard deviation of measurement
+    
+    ############################################################################
+    # TODO: Calculate the observation model probability as follows:            #
+    # (1) If we have no observations, we do not have any probability.          #
+    # (2) Having more observations than the pseudo range indicates that        #
+    #     this observation is not possible at all.                             #
+    # (3) Otherwise, the probability of this "observation" is the product of   #
+    #     probability of observing each landmark at that distance, where       #
+    #     that probability follows N(d, mu, sig) with                          #
+    #     d: observation distance                                              #
+    #     mu: expected mean distance, given by pseudo_ranges                   #
+    #     sig: squared standard deviation of measurement                       #
+    ############################################################################
+    
+    # If pseudo_ranges are more than or same to observations, 
+    # can calculate observation probability
+    if (len(observations) <= len(pseudo_ranges)):
+        # For (observation, pseudo_range) pair, calculate probability
+        # and multiply it to observation probability(distance_prob)
+        # As use values from the front in a sorted order,
+        # the remaining pseudo_range values will be discarded if exist.
+        for observation, pseudo_range in zip(observations, pseudo_ranges):
+            distance_prob *= norm_pdf(observation, pseudo_range, stdev)
+            
+    # If there is no observation(1) or there are more observations than the psuedo ranges(2),
+    # we don't have any probability or can't calculate probability because this observation is not possible
+    # Therefore, set the distance_prob to 0.0
+    else:
+        distance_prob = 0.0
+    
     return distance_prob
 
 # Normalize a probability distribution so that the sum equals 1.0.
