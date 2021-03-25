@@ -1,5 +1,5 @@
 import numpy as np
-from math import sqrt
+from math import sqrt, floor, ceil
 
 def Jacobian(x):
     px, py, vx, vy = x
@@ -21,3 +21,33 @@ def Jacobian(x):
          py / c2]
     ])
     return Hj
+
+
+def normalize(num, lower, upper, b=False):
+    res = num
+    if not b:
+        if lower >= upper:
+            raise ValueError("Invalid lower and upper limits: (%s, %s)" %
+                             (lower, upper))
+
+        res = num
+        if num > upper or num == lower:
+            num = lower + abs(num + upper) % (abs(lower) + abs(upper))
+        if num < lower or num == upper:
+            num = upper - abs(num - lower) % (abs(lower) + abs(upper))
+
+        res = lower if res == upper else num
+    else:
+        total_length = abs(lower) + abs(upper)
+        if num < -total_length:
+            num += ceil(num / (-2 * total_length)) * 2 * total_length
+        if num > total_length:
+            num -= floor(num / (2 * total_length)) * 2 * total_length
+        if num > upper:
+            num = total_length - num
+        if num < lower:
+            num = -total_length - num
+
+        res = num * 1.0  # Make all numbers float, to be consistent
+
+    return res
