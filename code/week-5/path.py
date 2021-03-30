@@ -50,7 +50,7 @@ def search(grid, init, goal, cost):
                     break
                 queue.append((n, t + cost))
                 closed[n] = -1
-    print(expand)
+
     pos = init
     while pos != goal:
         n = expand[pos]
