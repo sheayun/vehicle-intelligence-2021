@@ -34,6 +34,7 @@ def search(grid, init, goal, cost):
     expand = np.full(grid.shape, -1, dtype=np.int32)
     path = np.full(grid.shape, ' ')
     queue = [(init, 0)]
+    closed[init] = -1
     i = 1
     while len(queue) > 0:
         c, t = queue.pop(0)
@@ -49,7 +50,7 @@ def search(grid, init, goal, cost):
                     break
                 queue.append((n, t + cost))
                 closed[n] = -1
-
+    print(expand)
     pos = init
     while pos != goal:
         n = expand[pos]
