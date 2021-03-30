@@ -27,8 +27,6 @@ delta = [
     ( 0,  1),   # Right
 ]
 
-delta_name = ['^', '<', 'v', '>']
-
 def search(grid, init, goal, cost):
     closed = np.zeros(grid.shape, dtype=np.int32)
     path = None
