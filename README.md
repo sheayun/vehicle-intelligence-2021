@@ -14,7 +14,7 @@
 * Week 2 - Markov Localization & Bayes Filters ([pdf](https://drive.google.com/file/d/12sgyXqF2zwq5x7YpO_6_WXRFCKJr5p2M/view?usp=sharing))
 * Week 3 - Kalman Filters, EKF & Sensor Fusion ([pdf](https://drive.google.com/file/d/14eIIiALScfua8CJHSfzGJR6Xxw4vbrtW/view?usp=sharing))
 * Week 4 - Motion Model & Particle Filters ([pdf](https://drive.google.com/file/d/1GC_snED24_yyeXYc0N2cDdtN9nLL7MPc/view?usp=sharing))
-* Week 5 - Path Planning & the A* Algorithm
+* Week 5 - Path Planning & the A* Algorithm ([pdf](https://drive.google.com/file/d/1KmZPesHG-E_DfXbPJxWuOhBIt0G4_n_w/view?usp=sharing))
 * Week 6 - Motion Planning & the Hybrid A* Algorithm
 * Week 7 - Trajectory Generation
 
@@ -39,3 +39,5 @@
 * Week 4
 	- Cadena, C. et *al*. [Past, present, and future of simultaneous localization and mapping: Toward the robust-perception age](https://arxiv.org/abs/1606.05830). *IEEE Transactions on Robotics*, 32(6): 1309-1332, Dec. 2016.
 
+* Week 5
+	- Zeng, W. and Church, R. L. [Finding shortest paths on real road networks: the case for A*](https://doi.org/10.1080/13658810801949850). *International Journal of Geographical Information Science*, 23(4): 531-543, June 2009.
