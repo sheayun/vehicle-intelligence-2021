@@ -88,8 +88,6 @@ class ParticleFilter:
             # 1. Select the set of landmarks that are visible 
             #    (within the sensor range).
             for k,v in map_landmarks.items():
-#                 x_ml = v['x']
-#                 y_ml = v['y']
                 if distance(p,v) < sensor_range:
                     id_ = k
                     visibles.append({'id':id_,'x':v['x'],'y':v['y']})
