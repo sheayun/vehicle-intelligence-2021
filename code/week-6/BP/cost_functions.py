@@ -23,7 +23,7 @@ computed by get_helper_data function.
 REACH_GOAL = 0
 EFFICIENCY = 0
 
-DEBUG = True
+DEBUG = False
 
 def goal_distance_cost(vehicle, trajectory, predictions, data):
     '''
