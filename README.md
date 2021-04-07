@@ -15,8 +15,8 @@
 * Week 3 - Kalman Filters, EKF & Sensor Fusion ([pdf](https://drive.google.com/file/d/14eIIiALScfua8CJHSfzGJR6Xxw4vbrtW/view?usp=sharing))
 * Week 4 - Motion Model & Particle Filters ([pdf](https://drive.google.com/file/d/1GC_snED24_yyeXYc0N2cDdtN9nLL7MPc/view?usp=sharing))
 * Week 5 - Path Planning & the A* Algorithm ([pdf](https://drive.google.com/file/d/1KmZPesHG-E_DfXbPJxWuOhBIt0G4_n_w/view?usp=sharing))
-* Week 6 - Motion Planning & the Hybrid A* Algorithm
-* Week 7 - Trajectory Generation
+* Week 6 - Prediction & Behaviour Planning ([pdf](https://drive.google.com/file/d/15RSC2hIvUgdhfd97YuMDsfG2dmg0h6pl/view?usp=sharing))
+* Week 7 - Hybrid A* Algorithm & Trajectory Generation
 
 ---
 
