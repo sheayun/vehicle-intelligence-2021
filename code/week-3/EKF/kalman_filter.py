@@ -44,4 +44,3 @@ class KalmanFilter:
         self.x = self.x + np.dot(k, y)
         self.p = self.p - np.dot(np.dot(K, H_j), self.P)
    
-
