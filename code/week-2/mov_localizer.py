@@ -82,3 +82,4 @@ def normalize_distribution(prob_dist):
         if (total != 0.0):
             normalized[i] = prob_dist[i] / total
     return normalized
+
