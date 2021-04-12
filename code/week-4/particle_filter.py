@@ -1,5 +1,8 @@
 import numpy as np
 from helpers import distance
+import math
+import random
+from scipy.stats import multivariate_normal
 
 class ParticleFilter:
     def __init__(self, num_particles):
@@ -93,12 +96,41 @@ class ParticleFilter:
         #    for all the observations.
         # 5. Update the particle's weight by the calculated probability.
 
-        pass
+          for p in self.particles: 
+            associations = []
+            for k, v in map_landmarks.items():
+                dist = distance(p, v)
+                if dist <= sensor_range:
+                    associations.append({
+                            'id': k,
+                            'x': v['x'],
+                            'y': v['y']
+                    })
+            
+            trans_landmarks = []
+            for o in observations:
+                trans_landmarks.append({
+                    'x': p['x'] + o['x']*math.cos(p['t']) - o['y']*math.sin(p['t']),
+                    'y': p['y'] + o['x']*math.sin(p['t']) + o['y']*math.cos(p['t'])
+                })
+            
+            if not associations:
+                continue
+             
+            association_temp = self.associate(associations, trans_landmarks)
+            p['w'] = 1.0
+             
+            for i in range(len(association_temp)):
+                p['w'] *= multivariate_normal([association_temp[i]['x'], association_temp[i]['y']],[[std_landmark_x**2, 0], [0, std_landmark_y**2]]).pdf([trans_landmarks[i]['x'], trans_landmarks[i]['y']])
+                 
+                p['assoc'].append(association_temp[i]['id'])
+             
+			#p['assoc'] = associations
 
     # Resample particles with replacement with probability proportional to
     #   their weights.
     def resample(self):
-        return
+      
         # TODO: Select (possibly with duplicates) the set of particles
         #       that captures the posteior belief distribution, by
         # 1. Drawing particle samples according to their weights.
@@ -107,8 +139,23 @@ class ParticleFilter:
         #    references to mutable objects in Python.
         # Finally, self.particles shall contain the newly drawn set of
         #   particles.
-
-        pass
+        weights = [p['w'] for p in self.particles]
+        
+        resampled_particles = []
+        r = np.random.uniform(0.0, 1/len(self.particles))
+        c = weights[0]
+        for i in range(len(self.particles)):
+            U = r + (i * 1/len(self.particles))
+            while U > c:
+                if len(self.particles) > (i+1):
+                    i += 1
+                    c = c + weights[i]
+                else:
+                    break
+        resampled_particles.append(self.particles[i])
+        self.particles = resampled_particles   
+        return
+      
 
     # Choose the particle with the highest weight (probability)
     def get_best_particle(self):
