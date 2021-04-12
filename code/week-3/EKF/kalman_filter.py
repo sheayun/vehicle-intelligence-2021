@@ -2,6 +2,7 @@ import numpy as np
 from math import sqrt
 from math import atan2
 from tools import Jacobian
+from math import pi
 
 class KalmanFilter:
     def __init__(self, x_in, P_in, F_in, H_in, R_in, Q_in):
@@ -33,3 +34,13 @@ class KalmanFilter:
         # 6. Calculate new estimates
         #    x = x' + K * y
         #    P = (I - K * H_j) * P
+        px,py,vx,vy = self.x
+        H_j = Jacobian(self.x)
+        S = np.dot(np.dot(H_j.self.P), H_j.T) + self.R
+        K = np.dot(np.dot(slef.P, H_j.T),np.linalg.inv(S))
+        y = z - [sqrt(px*px+py*py), atan2(py,px), (px*vx+py*vy)/sqrt(px*px+py*py)]
+        while(y[1] > pi): y[1] -= 2*pi
+        while(y[1] < -pi): y[1] += 2*pi
+        self.x = self.x + np.dot(k, y)
+        self.p = self.p - np.dot(np.dot(K, H_j), self.P)
+   
