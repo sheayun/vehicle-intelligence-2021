@@ -72,11 +72,14 @@ class ParticleFilter:
 
     # Update the weights of each particle using a multi-variate
     # Gaussian distribution.
+    
     def update_weights(self, sensor_range, std_landmark_x, std_landmark_y,
                        observations, map_landmarks):
+        
         # TODO: For each particle, do the following:
         # 1. Select the set of landmarks that are visible
         #    (within the sensor range).
+        
         for p in self.particles:
             visible_landmarks = []
             for id, landmark in map_landmarks.items():
@@ -86,6 +89,7 @@ class ParticleFilter:
 
         # 2. Transform each observed landmark's coordinates from the
         #    particle's coordinate system to the map's coordinates.
+        
             transformed_observations = []
             for obs in observations:
                 tmp_obs = {}
@@ -104,6 +108,7 @@ class ParticleFilter:
         #    the predicted landmarks and observations; and returns
         #    the list of landmarks by implementing the nearest-neighbour
         #    association algorithm.
+        
             assoc_landmarks = self.associate(visible_landmarks, transformed_observations)
             p['assoc'] = [landmark['id'] for landmark in assoc_landmarks]
 
@@ -113,20 +118,25 @@ class ParticleFilter:
         #    and variances from std_landmark_x and std_landmark_y).
         #    The resulting probability is the product of probabilities
         #    for all the observations.
+        
             for t, a in zip(transformed_observations, assoc_landmarks):
                 g_x = norm_pdf(t['x'], a['x'], std_landmark_x)
                 g_y = norm_pdf(t['y'], a['y'], std_landmark_y)
                 gaussian = g_x * g_y
 
         # 5. Update the particle's weight by the calculated probability.
+        
                 p['w'] *= gaussian
             
     # Resample particles with replacement with probability proportional to
     #   their weights.
+    
     def resample(self):
+        
         # TODO: Select (possibly with duplicates) the set of particles
         #       that captures the posteior belief distribution, by
         # 1. Drawing particle samples according to their weights.
+        
         weights = [p['w'] for p in self.particles]
         w_cumsum = np.cumsum(weights)
         w_mean = np.sum(weights) / len(weights)
@@ -150,12 +160,14 @@ class ParticleFilter:
         #    references to mutable objects in Python.
         #    Finally, self.particles shall contain the newly drawn set of
         #    particles.
+        
         self.particles = []
         self.particles = new_particles.copy()
 
         return
 
     # Choose the particle with the highest weight (probability)
+    
     def get_best_particle(self):
         highest_weight = -1.0
         for p in self.particles:
@@ -163,3 +175,5 @@ class ParticleFilter:
                 highest_weight = p['w']
                 best_particle = p
         return best_particle
+
+    
