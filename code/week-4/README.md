@@ -35,15 +35,15 @@
        # 2. Transform each observed landmark's coordinates from the
         #    particle's coordinate system to the map's coordinates.
         
-            transformed_observations = []
+            transformed_obs = []
             for obs in observations:
-                tmp_obs = {}
-                tmp_obs['x'] = p['x'] + (obs['x'] * np.cos(p['t'])) - \ (obs['y'] * np.sin(p['t']))
-                tmp_obs['y'] = p['y'] + (obs['x'] * np.sin(p['t'])) + \ (obs['y'] * np.cos(p['t']))
-                transformed_observations.append(tmp_obs)
+                t_observ = {}
+                t_observ['x'] = p['x'] + (obs['x'] * np.cos(p['t'])) - \ (obs['y'] * np.sin(p['t']))
+                t_observ['y'] = p['y'] + (obs['x'] * np.sin(p['t'])) + \ (obs['y'] * np.cos(p['t']))
+                transformed_obs.append(t_observ)
 
             if len(visible_landmarks) == 0:
-                continue 
+                continue
 
 - 계측된 랜드마크의 x, y 좌표를 Map 기준의 global 좌표로 변환시킨다.
 
@@ -54,7 +54,7 @@
         #    the list of landmarks by implementing the nearest-neighbour
         #    association algorithm.
         
-            assoc_landmarks = self.associate(visible_landmarks, transformed_observations)
+             assoc_landmarks = self.associate(visible_landmarks, transformed_obs)
             p['assoc'] = [landmark['id'] for landmark in assoc_landmarks]
             
 - Sensor range 내의 랜드마크와 global 좌표로 변환된 랜드마크를 매칭 시킨다.
@@ -67,11 +67,12 @@
         #    The resulting probability is the product of probabilities
         #    for all the observations.
         
-            for t, a in zip(transformed_observations, assoc_landmarks):
+            for t, a in zip(transformed_obs, assoc_landmarks):
             
-                g_x = norm_pdf(t['x'], a['x'], std_landmark_x)
-                g_y = norm_pdf(t['y'], a['y'], std_landmark_y)
-                gaussian = g_x * g_y    
+                Gaussian_x = norm_pdf(t['x'], a['x'], std_landmark_x)
+                Gaussian_y = norm_pdf(t['y'], a['y'], std_landmark_y)
+                
+                Gaussian = Gaussian_x * Gaussian_y
 
 - transformed 랜드마크가 해당 위치에 존재할 확률은 multi-variate Gaussian distribution 으로 계산 가능하며,              
 assoc의 랜드마크 좌표 x, y가 표준 편차이여야 한다.             
@@ -79,9 +80,9 @@ assoc의 랜드마크 좌표 x, y가 표준 편차이여야 한다.
 
       # 5. Update the particle's weight by the calculated probability.
         
-                p['w'] *= gaussian
+                 p['w'] *= Gaussian
                 
-- transformed 의 랜드마크에 대한 확률 값을 Gaussian 으로 구하여 최종 값이 Particle의 Weight 로 곱해진다.
+- transformed 의 랜드마크에 대한 확률 값을 Gaussian 으로 구하여 최종 값이 Particle 의 Weight로 곱해진다.
 - 랜드마크 매칭 및 파티클 확률을 가우시안 분포로 계산하고, Particle weight 를 업데이트한다.   
 
 [2] Resample
@@ -95,24 +96,21 @@ assoc의 랜드마크 좌표 x, y가 표준 편차이여야 한다.
         #       that captures the posteior belief distribution, by
         # 1. Drawing particle samples according to their weights.
         
-        weights = [p['w'] for p in self.particles]
-        w_cumsum = np.cumsum(weights)
-        w_mean = np.sum(weights) / len(weights)
-        weight_idx = np.zeros(len(weights), dtype=np.int8)
+        weights = [p['w'] for p in self.particles.copy()] 
+        resampled_particles = []
+        positions = (np.arange(len(weights)) + np.random.random()) / len(weights)
+    
+        idx = np.zeros(len(weights), 'i')
+        cum_sum = np.cumsum(weights)
         
-        w_pointer = 0.0
-        i = w_idx = 0
-        while i > len(weights):
-            if w_cumsum[w_idx] >= w_pointer:
-                weight_idx[i] = w_idx
+        i, j = 0, 0
+        while i < len(weights) and j< len(weights) :
+            if positions[i] < cum_sum[j]:
+                idx[i] = j
+                i += 1
             else:
-                weight_idx[i] = w_idx
-                w_idx += 1
-            w_pointer += w_mean
-            i += 1
-            
-        new_particles = [self.particles[i].copy() for i in weight_idx]
-
+                j += 1
+                
 - 파티클 weight 에 따라 resampling 되며 가중치가 크면 여러 번, 가중치가 작으면 클 때보다는 작게 sampling 된다.
 - weight idx 함수를 이용하여 다음 주기의 Particle 에 weihted sampling 하게 된다.
 
@@ -122,10 +120,10 @@ assoc의 랜드마크 좌표 x, y가 표준 편차이여야 한다.
         #    Finally, self.particles shall contain the newly drawn set of
         #    particles.
         
-        self.particles = []
-        self.particles = new_particles.copy()
-
-        return
+       resampled_particles.append(self.particles[idx[i]])
+        self.particles = resampled_particles
+        
+        # return
 
 - resampling 된 파티클을 복사하여 재입력한다.
 
