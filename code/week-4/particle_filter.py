@@ -1,12 +1,11 @@
 import numpy as np
-from helpers import distance
+from helpers import *
 
 class ParticleFilter:
     def __init__(self, num_particles):
         self.initialized = False
         self.num_particles = num_particles
 
-	
     # Set the number of particles.
     # Initialize all the particles to the initial position
     #   (based on esimates of x, y, theta and their uncertainties from GPS)
@@ -41,11 +40,9 @@ class ParticleFilter:
                 xf = p['x'] + v_yr * (np.sin(p['t'] + yr_dt) - np.sin(p['t']))
                 yf = p['y'] + v_yr * (np.cos(p['t']) - np.cos(p['t'] + yr_dt))
                 tf = p['t'] + yr_dt
-
             p['x'] = np.random.normal(xf, std_x)
             p['y'] = np.random.normal(yf, std_y)
             p['t'] = np.random.normal(tf, std_theta)
-
 
     # Find the predicted measurement that is closest to each observed
     #   measurement and assign the observed measurement to this
@@ -74,94 +71,90 @@ class ParticleFilter:
         return associations
 
     # Update the weights of each particle using a multi-variate
-    #   Gaussian distribution.
+    # Gaussian distribution.
     def update_weights(self, sensor_range, std_landmark_x, std_landmark_y,
                        observations, map_landmarks):
-        import math
         # TODO: For each particle, do the following:
         # 1. Select the set of landmarks that are visible
         #    (within the sensor range).
+        for p in self.particles:
+            visible_landmarks = []
+            for id, landmark in map_landmarks.items():
+                if distance(p, landmark) < sensor_range:
+                    visible = {'x': landmark['x'], 'y': landmark['y'], 'id': id}
+                    visible_landmarks.append(visible)
+
         # 2. Transform each observed landmark's coordinates from the
         #    particle's coordinate system to the map's coordinates.
+            transformed_observations = []
+            for obs in observations:
+                tmp_obs = {}
+                tmp_obs['x'] = p['x'] + (obs['x'] * np.cos(p['t'])) - \
+                                        (obs['y'] * np.sin(p['t']))
+                tmp_obs['y'] = p['y'] + (obs['x'] * np.sin(p['t'])) + \
+                                        (obs['y'] * np.cos(p['t']))
+                transformed_observations.append(tmp_obs)
+
+            if len(visible_landmarks) == 0:
+                continue
+
         # 3. Associate each transformed observation to one of the
         #    predicted (selected in Step 1) landmark positions.
         #    Use self.associate() for this purpose - it receives
         #    the predicted landmarks and observations; and returns
         #    the list of landmarks by implementing the nearest-neighbour
         #    association algorithm.
+            assoc_landmarks = self.associate(visible_landmarks, transformed_observations)
+            p['assoc'] = [landmark['id'] for landmark in assoc_landmarks]
+
         # 4. Calculate probability of this set of observations based on
         #    a multi-variate Gaussian distribution (two variables being
         #    the x and y positions with means from associated positions
         #    and variances from std_landmark_x and std_landmark_y).
         #    The resulting probability is the product of probabilities
         #    for all the observations.
+            for t, a in zip(transformed_observations, assoc_landmarks):
+                g_x = norm_pdf(t['x'], a['x'], std_landmark_x)
+                g_y = norm_pdf(t['y'], a['y'], std_landmark_y)
+                gaussian = g_x * g_y
+
         # 5. Update the particle's weight by the calculated probability.
-
-        for p in self.particles:
-            landmarks = []
-            for _id in map_landmarks:
-                x, y = map_landmarks[_id]['x'], map_landmarks[_id]['y']
-                if self.calculate_distance(x-p['x'], y-p['y']) < sensor_range:
-                    landmarks.append({'id': _id, 'x': x, 'y': y})
-
-            map_observations = []
-            for observation in observations:
-                x = p['x'] + observation['x']*np.cos(p['t']) - observation['y']*np.sin(p['t'])
-                y = p['y'] + observation['x'] * np.sin(p['t']) + observation['y'] * np.cos(p['t'])
-                map_observations.append({'x': x, 'y': y})
-
-            if not landmarks:
-                continue
-
-            tmp_assoc = self.associate(landmarks, map_observations)
-
-            p['w'] = 1.
-            p['assoc'] = []
-            for i in range(len(tmp_assoc)):
-                p['w'] *= self.norm_pdf(self.calculate_distance(tmp_assoc[i]['x'] - p['x'], tmp_assoc[i]['y'] - p['y']),
-                                        self.calculate_distance(observations[i]['x'], observations[i]['y']),
-                                        math.sqrt(std_landmark_x**2 + std_landmark_y**2)) + 1e-100
-
-                # p['w'] *= (self.norm_pdf(tmp[i]['x'] - p['x'], observations[i]['x'], std_landmark_x) *
-                #            self.norm_pdf(tmp[i]['y'] - p['y'], observations[i]['y'], std_landmark_y)) + 1e-100
-
-                # p['w'] *= self.multivariate_normal(np.array([observations[i]['x'],
-                #                                         observations[i]['y']]),
-                #                               2,
-                #                               np.array([tmp[i]['x'] - p['x'],
-                #                                         tmp[i]['y'] - p['y']]),
-                #                               np.array([[1, 0.], [0., 1]])) + 1e-100
-                p['assoc'].append(tmp_assoc[i]['id'])
-
-		
+                p['w'] *= gaussian
+            
     # Resample particles with replacement with probability proportional to
     #   their weights.
     def resample(self):
-        import copy
-        import random
         # TODO: Select (possibly with duplicates) the set of particles
         #       that captures the posteior belief distribution, by
         # 1. Drawing particle samples according to their weights.
+        weights = [p['w'] for p in self.particles]
+        w_cumsum = np.cumsum(weights)
+        w_mean = np.sum(weights) / len(weights)
+        weight_idx = np.zeros(len(weights), dtype=np.int8)
+        
+        w_pointer = 0.0
+        i = w_idx = 0
+        while i > len(weights):
+            if w_cumsum[w_idx] >= w_pointer:
+                weight_idx[i] = w_idx
+            else:
+                weight_idx[i] = w_idx
+                w_idx += 1
+            w_pointer += w_mean
+            i += 1
+            
+        new_particles = [self.particles[i].copy() for i in weight_idx]
+
         # 2. Make a copy of the particle; otherwise the duplicate particles
         #    will not behave independently from each other - they are
         #    references to mutable objects in Python.
-        # Finally, self.particles shall contain the newly drawn set of
-        #   particles.
-        tmp = []
-        _max = sum([i['w'] for i in self.particles])
+        #    Finally, self.particles shall contain the newly drawn set of
+        #    particles.
+        self.particles = []
+        self.particles = new_particles.copy()
 
-        for _ in range(self.num_particles):
-            r = random.uniform(0, _max)
-            for particle in self.particles:
-                if r < particle['w']:
-                    tmp.append(copy.deepcopy(particle))
-                    break
-                else:
-                    r -= particle['w']
+        return
 
-        self.particles = tmp
-
-	
     # Choose the particle with the highest weight (probability)
     def get_best_particle(self):
         highest_weight = -1.0
@@ -169,19 +162,4 @@ class ParticleFilter:
             if p['w'] > highest_weight:
                 highest_weight = p['w']
                 best_particle = p
-
         return best_particle
-
-    def calculate_distance(self, x, y):
-        return (x**2 + y**2)**(1/2)
-
-    def norm_pdf(self, x, m, s):
-        from math import sqrt, pi, exp
-        one_over_sqrt_2pi = 1 / sqrt(2 * pi)
-        return (one_over_sqrt_2pi / s) * exp(-0.5 * ((x - m) / s) ** 2)
-
-    def multivariate_normal(self, x, d, mean, covariance):
-        """pdf of the multivariate normal distribution."""
-        x_m = x - mean
-        return (1. / (np.sqrt((2 * np.pi) ** d * np.linalg.det(covariance))) *
-                np.exp(-(np.linalg.solve(covariance, x_m).T.dot(x_m)) / 2))
