@@ -7,21 +7,6 @@
 
 ## Assignment
 
-You will complete the implementation of a simple Markov localizer by writing the following two functions in `markov_localizer.py`:
-
-* `motion_model()`: For each possible prior positions, calculate the probability that the vehicle will move to the position specified by `position` given as input.
-* `observation_model()`: Given the `observations`, calculate the probability of this measurement being observed using `pseudo_ranges`.
-
-The algorithm is presented and explained in class.
-
-All the other source files (`main.py` and `helper.py`) should be left as they are.
-
-If you correctly implement the above functions, you expect to see a plot similar to the following:
-
-![Expected Result of Markov Localization][plot]
-
-If you run the program (`main.py`) without any modification to the code, it will generate only the frame of the above plot because all probabilities returned by `motion_model()` are zero by default.
-
 [HW_Week2]
 
 
@@ -59,4 +44,20 @@ def observation_model(landmarks, observations, pseudo_ranges, stdev):
 
 - 정확도가 점차 커지는 과정은 관측된 수만큼 반복하여 차량에서 관측한 나무 사이의 거리와 나무가 그 거리에서 보일 확률을 곱하여 누적한다. 
 위와 같은 반복 작업으로 계산된 위치에 대한 확률과 센서 측정에 대한 확률을 이용하여 현재 차량이 위치할 수 있는 확률을 나타낸다. 
+    
+
+You will complete the implementation of a simple Markov localizer by writing the following two functions in `markov_localizer.py`:
+
+* `motion_model()`: For each possible prior positions, calculate the probability that the vehicle will move to the position specified by `position` given as input.
+* `observation_model()`: Given the `observations`, calculate the probability of this measurement being observed using `pseudo_ranges`.
+
+The algorithm is presented and explained in class.
+
+All the other source files (`main.py` and `helper.py`) should be left as they are.
+
+If you correctly implement the above functions, you expect to see a plot similar to the following:
+
+![Expected Result of Markov Localization][plot]
+
+If you run the program (`main.py`) without any modification to the code, it will generate only the frame of the above plot because all probabilities returned by `motion_model()` are zero by default.
     
