@@ -137,7 +137,7 @@
 ![image](https://user-images.githubusercontent.com/80089347/117464664-da236600-af8b-11eb-8a1e-5d16ec38130a.png)
 
 
-- 2. speed = 0.5, num theta cells = 360
+- 2. speed = 1.5, num theta cells = 360
 
 
 ![image](https://user-images.githubusercontent.com/80089347/117464762-f1faea00-af8b-11eb-8f38-13046f4eb48f.png)
