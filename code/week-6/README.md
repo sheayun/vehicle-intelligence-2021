@@ -136,6 +136,7 @@ def inefficiency_cost(vehicle, trajectory, predictions, data):
     # print(cost)
     return cost
     
+    
 - 목표 차로와 차량의 속도에 따라 cost를 부여하여 현재 궤적을 구한다.
  
 - 목표 차로에 도달하기 위해 차로 변경을 하며 목표지점에 가까워 질수록 cost가 증가한다.  
