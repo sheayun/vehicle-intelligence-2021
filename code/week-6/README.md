@@ -2,32 +2,33 @@
 
 # Gaussian Naive Bayes Classifier
 ---
-def train(self, X, Y):
-            self.X_arr, self.Y_arr = np.array(X), np.array(Y)
-            unique, cnt = np.unique(Y, return_counts=True)
-            self.priors = cnt / len(Y)
-        
-            self.Means = np.array([self.X_arr[np.where(self.Y_arr==i)].mean(axis=0) for i in self.classes])
-            self.Standevi = np.array([self.X_arr[np.where(self.Y_arr==i)].std(axis=0) for i in self.classes])
-        
-            return self
-        
-def predict(self, observation):
-            probas = np.zeros(len(self.classes))
-            # Calculate Gaussian probability for each variable based on the
-            # mean and standard deviation calculated in the training process.
-            for i in range(len(self.classes)):
-                probability = 1
-                for k in range(self.X_arr.shape[1]):
-                    # Multiply all the probabilities for variables, and then
-                    # normalize them to get conditional probabilities.
-                    probability *= gaussian_prob(observation[k], self.Means[i][k], self.Standevi[i][k])
 
-                probas[i] = probability
-            nmz = probas / probas.sum()
-        
-            # Return the label for the highest conditional probability.
-            return self.classes[nmz.argmax(axis=0)]
+	def train(self, X, Y):
+		    self.X_arr, self.Y_arr = np.array(X), np.array(Y)
+		    unique, cnt = np.unique(Y, return_counts=True)
+		    self.priors = cnt / len(Y)
+
+		    self.Means = np.array([self.X_arr[np.where(self.Y_arr==i)].mean(axis=0) for i in self.classes])
+		    self.Standevi = np.array([self.X_arr[np.where(self.Y_arr==i)].std(axis=0) for i in self.classes])
+
+		    return self
+
+	def predict(self, observation):
+		    probas = np.zeros(len(self.classes))
+		    # Calculate Gaussian probability for each variable based on the
+		    # mean and standard deviation calculated in the training process.
+		    for i in range(len(self.classes)):
+			probability = 1
+			for k in range(self.X_arr.shape[1]):
+			    # Multiply all the probabilities for variables, and then
+			    # normalize them to get conditional probabilities.
+			    probability *= gaussian_prob(observation[k], self.Means[i][k], self.Standevi[i][k])
+
+			probas[i] = probability
+		    nmz = probas / probas.sum()
+
+		    # Return the label for the highest conditional probability.
+		    return self.classes[nmz.argmax(axis=0)]
 
 - Gaussian Naive Bayes Classifier 는 차량의 궤적 (좌회전 / 직진 / 우회전) 에 대한 데이터를 수집하고 평균과 표준편차를 계산하여 관측을 통해 확률이 높은 주행 경로를 예측한다.
 
@@ -46,95 +47,95 @@ def predict(self, observation):
 # Behaviour Planning
 ---
 
-def choose_next_state(self, predictions):
-        '''
-        Implement the transition function code for the vehicle's
-        behaviour planning finite state machine, which operates based on
-        the cost function (defined in a separate module cost_functions.py).
-        INPUTS: A predictions dictionary with vehicle id keys and predicted
-            vehicle trajectories as values. Trajectories are a list of
-            Vehicle objects representing the vehicle at the current timestep
-            and one timestep in the future.
-        OUTPUT: The the best (lowest cost) trajectory corresponding to
-            the next ego vehicle state.
-        Functions that will be useful:
-        1. successor_states():
-            Returns a vector of possible successor states
-            for the finite state machine.
-        2. generate_trajectory(self, state, predictions):
-            Returns a vector of Vehicle objects representing a
-            vehicle trajectory, given a state and predictions.
-            Note that trajectories might be empty if no possible trajectory
-            exists for the state; for example, if the state is LCR, but a
-            vehicle is occupying the space to the ego vehicle's right,
-            then there is no possible trajectory without first
-            transitioning to another state.
-        3. calculate_cost(vehicle, trajectory, predictions):
-            Imported from cost_functions.py, computes the cost for
-            a trajectory.
-        '''
+	def choose_next_state(self, predictions):
+		'''
+		Implement the transition function code for the vehicle's
+		behaviour planning finite state machine, which operates based on
+		the cost function (defined in a separate module cost_functions.py).
+		INPUTS: A predictions dictionary with vehicle id keys and predicted
+		    vehicle trajectories as values. Trajectories are a list of
+		    Vehicle objects representing the vehicle at the current timestep
+		    and one timestep in the future.
+		OUTPUT: The the best (lowest cost) trajectory corresponding to
+		    the next ego vehicle state.
+		Functions that will be useful:
+		1. successor_states():
+		    Returns a vector of possible successor states
+		    for the finite state machine.
+		2. generate_trajectory(self, state, predictions):
+		    Returns a vector of Vehicle objects representing a
+		    vehicle trajectory, given a state and predictions.
+		    Note that trajectories might be empty if no possible trajectory
+		    exists for the state; for example, if the state is LCR, but a
+		    vehicle is occupying the space to the ego vehicle's right,
+		    then there is no possible trajectory without first
+		    transitioning to another state.
+		3. calculate_cost(vehicle, trajectory, predictions):
+		    Imported from cost_functions.py, computes the cost for
+		    a trajectory.
+		'''
 
-        # TODO: implement state transition function based on the cost
-        #       associated with each transition.
-
-      
-        possible_successor_states = self.successor_states()
-        costs = []
-        for state in possible_successor_states:
-            print("possibles:", state)
-            trajectory = self.generate_trajectory(state, predictions)
-            print("trajectory state:", trajectory[1].state)
-            cost_for_state = calculate_cost(self, trajectory, predictions)
-            costs.append({'state': state, 'cost': cost_for_state})
-
-        good_state = None
-        min_cost = 9999999
-        for c in costs:
-            if c['cost'] < min_cost:
-                min_cost = c['cost']
-                good_state = c['state']
-
-        next_trajectory = self.generate_trajectory(good_state, predictions)
-        # Note that the return value is a trajectory, where a trajectory
-        # is a list of Vehicle objects with two elements.
-        return next_trajectory
+		# TODO: implement state transition function based on the cost
+		#       associated with each transition.
 
 
-def goal_distance_cost(vehicle, trajectory, predictions, data):
-    '''
-    Cost increases based on distance of intended lane (for planning a
-    lane change) and final lane of a trajectory.
-    Cost of being out of goal lane also becomes larger as vehicle approaches
-    the goal distance.
-    '''
-    intended_lane_distance = vehicle.goal_lane - data[0]
-    final_lane_distance = vehicle.goal_lane - data[1]
-    goal_distance = data[2]
-    
-    if goal_distance / vehicle.goal_s > 0.4:
-        cost = 0.0
-    elif goal_distance > 0:
-        cost = 1 - exp((intended_lane_distance + final_lane_distance) / (goal_distance))
-    else:
-        cost = 1
-    print("goal_distance_cost:", cost)
-    return cost
+		possible_successor_states = self.successor_states()
+		costs = []
+		for state in possible_successor_states:
+		    print("possibles:", state)
+		    trajectory = self.generate_trajectory(state, predictions)
+		    print("trajectory state:", trajectory[1].state)
+		    cost_for_state = calculate_cost(self, trajectory, predictions)
+		    costs.append({'state': state, 'cost': cost_for_state})
 
-def inefficiency_cost(vehicle, trajectory, predictions, data):
-    '''
-    Cost becomes higher for trajectories with intended lane and final lane
-    that have slower traffic.
-    '''
-    intented_lane = data[0]
-    final_lane = data[1]
-    goal_distance = data[2]
-    
-    if goal_distance / vehicle.goal_s > 0.4:
-        cost = exp(-(intented_lane + final_lane))
-    else:
-        cost = 1 - exp(-(intented_lane + final_lane))
-    # print(cost)
-    return cost
+		good_state = None
+		min_cost = 9999999
+		for c in costs:
+		    if c['cost'] < min_cost:
+			min_cost = c['cost']
+			good_state = c['state']
+
+		next_trajectory = self.generate_trajectory(good_state, predictions)
+		# Note that the return value is a trajectory, where a trajectory
+		# is a list of Vehicle objects with two elements.
+		return next_trajectory
+
+
+	def goal_distance_cost(vehicle, trajectory, predictions, data):
+	    '''
+	    Cost increases based on distance of intended lane (for planning a
+	    lane change) and final lane of a trajectory.
+	    Cost of being out of goal lane also becomes larger as vehicle approaches
+	    the goal distance.
+	    '''
+	    intended_lane_distance = vehicle.goal_lane - data[0]
+	    final_lane_distance = vehicle.goal_lane - data[1]
+	    goal_distance = data[2]
+
+	    if goal_distance / vehicle.goal_s > 0.4:
+		cost = 0.0
+	    elif goal_distance > 0:
+		cost = 1 - exp((intended_lane_distance + final_lane_distance) / (goal_distance))
+	    else:
+		cost = 1
+	    print("goal_distance_cost:", cost)
+	    return cost
+
+	def inefficiency_cost(vehicle, trajectory, predictions, data):
+	    '''
+	    Cost becomes higher for trajectories with intended lane and final lane
+	    that have slower traffic.
+	    '''
+	    intented_lane = data[0]
+	    final_lane = data[1]
+	    goal_distance = data[2]
+
+	    if goal_distance / vehicle.goal_s > 0.4:
+		cost = exp(-(intented_lane + final_lane))
+	    else:
+		cost = 1 - exp(-(intented_lane + final_lane))
+	    # print(cost)
+	    return cost
     
     
 - 목표 차로와 차량의 속도에 따라 cost를 부여하여 현재 궤적을 구한다.
