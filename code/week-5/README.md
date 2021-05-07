@@ -49,6 +49,7 @@ def optimum_policy_2D(grid, init, goal, cost):
                                 value[(t, y, x)] = val
                                 policy[(t, y, x)] = act
                                 change = True
+				
     # Now navigate through the policy table to generate a
     # sequence of actions to take to follow the optimal path.
     # TODO: implement code.
@@ -82,29 +83,29 @@ def optimum_policy_2D(grid, init, goal, cost):
         policy2D[(y,x)] = policy_name
 
 
-"경로 탐색 알고리즘"
+- "경로 탐색 알고리즘"
 
-차량 모델에서 Heading Angle 을 고려하여 거동에 따른 Cost를 계산하여 최적화된 경로를 탐색한다.
+- 차량 모델에서 Heading Angle 을 고려하여 거동에 따른 Cost를 계산하여 최적화된 경로를 탐색한다.
 
-차량의 방향 "t" 이용하여 Optimal_Policy_2D 초기 위치인 start 위치에 차량의 이동 방향 정보를 갱신한다.
+- 차량의 방향 "t" 이용하여 Optimal_Policy_2D 초기 위치인 start 위치에 차량의 이동 방향 정보를 갱신한다.
 
-반복하여 이동할 지역을 탐색하다 목적지에 도착하면 탐색을 종료하기 위해 value = 0, policy = -999 로 설정.
+- 반복하여 이동할 지역을 탐색하다 목적지에 도착하면 탐색을 종료하기 위해 value = 0, policy = -999 로 설정.
 
-이동이 가능한 지역인지 Map 범위 안에 있는지 확인한다.
+- 이동이 가능한 지역인지 Map 범위 안에 있는지 확인한다.
 
-차량의 action은 직진,좌회전,후진,우회전(up / left / down / right) 을 의미하며 
+- 차량의 action은 직진,좌회전,후진,우회전(up / left / down / right) 을 의미하며 
 4가지 거동에 대한 방향은 2차원 x,y 위에 존재한다. -> "t"
 
-차량 action에 따른 이동에 대한 정보는 현재 상태와 방향에서 이동된 상태와 방향으로
+- 차량 action에 따른 이동에 대한 정보는 현재 상태와 방향에서 이동된 상태와 방향으로
 갱신된 action 정보를 나타낸다 -> "act"
 
-갱신된 상태와 방향이 Map grid 내의 지점이면 action에 대한 cost를 부여해 value 값 에 더해주고, 
+- 갱신된 상태와 방향이 Map grid 내의 지점이면 action에 대한 cost를 부여해 value 값 에 더해주고, 
 기존의 value 와 비교하여 최적의 action으로 갱신한다.  
 
-시작점에서 출발하여 차량 거동에따라 갱신된 action 정보를 policy 에 저장 하는 것을 반복하여 최적 경로를 탐색한다.
+- 시작점에서 출발하여 차량 거동에따라 갱신된 action 정보를 policy 에 저장 하는 것을 반복하여 최적 경로를 탐색한다.
 -> "Policy_ID"
 
-목표지점에 도달하지 못하거나, map grid 를 벗어나게 된다면 경로 탐색은 실패한다.
+- 목표지점에 도달하지 못하거나, map grid 를 벗어나게 된다면 경로 탐색은 실패한다.
 
 
 # Week 5 - Path Planning & the A* Algorithm
