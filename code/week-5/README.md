@@ -109,6 +109,8 @@ def optimum_policy_2D(grid, init, goal, cost):
 
 - 좌회전 cost에 따른 결과 비교 (가중치를 크게 주면 교차로에서 직진 후 우회전으로 돌아가는 것을 확인할 수 있다.)
 - cost (2, 1, 10) <-> (2, 1, 100)
+
+
 ![image](https://user-images.githubusercontent.com/80089347/117440459-07155000-af6f-11eb-94bd-fe18fd04de7f.png)
 
 
