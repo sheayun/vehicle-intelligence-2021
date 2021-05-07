@@ -111,7 +111,7 @@ def optimum_policy_2D(grid, init, goal, cost):
 - cost (2, 1, 10) <-> (2, 1, 100)
 
 
-![image](https://user-images.githubusercontent.com/80089347/117440459-07155000-af6f-11eb-94bd-fe18fd04de7f.png)
+![image](https://user-images.githubusercontent.com/80089347/117440973-b7835400-af6f-11eb-8647-cb1b3f221ae5.png)
 
 
 
